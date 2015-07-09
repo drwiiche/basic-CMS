@@ -17,7 +17,7 @@
 
   function find_all_subjects(){
     global $connection;
-    $query = "SELECT * FROM subjects WHERE visible = 1 ORDER BY position ASC ";
+    $query = "SELECT * FROM subjects ORDER BY position ASC ";
     $subjects = mysqli_query($connection,$query);
     confirm_query($subjects);
     return $subjects;

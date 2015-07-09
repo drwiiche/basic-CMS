@@ -64,10 +64,10 @@
 
     <div id="page">
       <?php
+            if (isset($_SESSION["message"])) {
             $output = "<div class=\"message\">";
             $output .=  htmlentities($_SESSION["message"]);
             $output .= "</div>";
-            if (isset($_SESSION["message"])) {
               echo $output;
               $_SESSION["message"] = null;
             }

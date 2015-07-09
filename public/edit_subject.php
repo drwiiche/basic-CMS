@@ -3,6 +3,9 @@
 <?php require_once("../includes/functions.php"); ?>
 <?php include('../includes/layouts/header.php'); ?>
 <?php
+  if (empty($_GET["subject"])) {
+    redirect_to("manage_content.php");
+  }
   if (isset($_GET["subject"])) {
     $selected_subject_id = htmlspecialchars($_GET["subject"]);
     $current_subject = find_subject_id($selected_subject_id);
@@ -22,9 +25,7 @@
 
   }
  ?>
- <?php if (!$current_subject) {
-   redirect_to("manage_content.php");
- } ?>
+
 <div id="main">
 
     <div id="navigation">
@@ -65,20 +66,23 @@
     </div>
 
     <div id="page">
+      <?php echo $subject["id"]; ?>
       <?php
+            if (isset($_SESSION["message"])) {
             $output = "<div class=\"message\">";
             $output .=  htmlentities($_SESSION["message"]);
             $output .= "</div>";
-            if (isset($_SESSION["message"])) {
               echo $output;
               $_SESSION["message"] = null;
             }
        ?>
-      <h2>Edit Subject : <?php var_dump($subject["menu_name"]); ?></h2>
+      <h2>Edit Subject : <?php $subject_title = find_subject_id("$selected_subject_id");
+                               echo $subject_title['menu_name'];
+                            ?></h2>
       <form action="create_subject.php" method="post">
         <p>
           Subject name:
-          <input type="text" name="menu_name" value="">
+          <input type="text" name="menu_name" value="<?php echo $subject_title['menu_name']; ?>">
         </p>
         <p>
           Position:
@@ -86,17 +90,25 @@
             <?php
             $all_subjects = find_all_subjects();
             $subject_count = mysqli_num_rows($all_subjects);
-            for ($count=1; $count <= $subject_count + 1 ; $count++) {
-            echo "<option value=\"{$count}\">{$count}</option>";
+            for ($count=1; $count <= $subject_count ; $count++) {
+            echo "<option value=\"{$count}\"";
+                  if ($current_subject["position"] == $count) {
+                    echo " selected";
+                  }
+            echo ">{$count}</option>";
 
             } ?>
           </select>
         </p>
         <p>
           visible:
-          <input type="radio" name="visible" value="0"> NO
+          <input type="radio" name="visible" value="0" <?php if ($current_subject["visible"] == 0) {
+            echo " checked";
+          } ?>> NO
           &nbsp;
-          <input type="radio" name="visible" value="1"> YES
+          <input type="radio" name="visible" value="1"  <?php if ($current_subject["visible"] == 1) {
+            echo " checked";
+          } ?>> YES
         </p>
         <input type="submit" name="submit" value="Edit Subject">
       </form>
